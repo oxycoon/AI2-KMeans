@@ -17,7 +17,7 @@
 Agent::Agent()
 {
     srand (time(NULL));
-
+    initNonWords();
 }
 
 Agent::~Agent()
@@ -81,19 +81,34 @@ std::vector<Data *> Agent::processDocuments(DocumentCollection &collection)
 
         while(!ss.eof())
         {
-            bool unique = true;
+            bool addToList = true;
             std::string word;
             ss >> word;
 
-            for(int j = 0; j < _distinctTerms.size(); j++)
+            //Checks if the word is something to ignore;
+            for(int j = 0; j < _nonWordList.size(); j++)
             {
-                if(word == _distinctTerms[j])
+                if(word == _nonWordList[j])
                 {
-                    unique = false;
+                    addToList = false;
                     break;
                 }
             }
-            if(unique)
+
+            //If the word passed the non adding words test, check if
+            //the word is already in the list
+            if(addToList)
+            {
+                for(int j = 0; j < _distinctTerms.size(); j++)
+                {
+                    if(word == _distinctTerms[j])
+                    {
+                        addToList = false;
+                        break;
+                    }
+                }
+            }
+            if(addToList)
             {
                 _distinctTerms.push_back(word);
             }
@@ -107,14 +122,14 @@ std::vector<Data *> Agent::processDocuments(DocumentCollection &collection)
         _distinctTerms.erase(std::remove(_distinctTerms.begin(), _distinctTerms.end(), killList[i]), _distinctTerms.end());
     }
 
-    std::cout << "Number of unique words: " << _distinctTerms.size() << std::endl;
-    for(int i=0; i < _distinctTerms.size(); i++)
+
+    for(int i = 0; i < _distinctTerms.size(); i++)
     {
         std::cout << _distinctTerms[i] << std::endl;
+
     }
 
     //Create document vector space
-
     std::vector<Data *> result;
     Data* dv;
     std::vector<double> space;
@@ -141,12 +156,20 @@ std::vector<Data *> Agent::processDocuments(DocumentCollection &collection)
     return result;
 }
 
+//------------------------------
+//  PRIVATE FUNCTIONS - Initializers
+//------------------------------
+
 void Agent::initNonWords()
 {
     _nonWordList.push_back("the");
     _nonWordList.push_back("a");
     _nonWordList.push_back("i");
     _nonWordList.push_back("and");
+    _nonWordList.push_back("this");
+    _nonWordList.push_back("is");
+    _nonWordList.push_back("to");
+    _nonWordList.push_back("or");
 }
 
 //------------------------------
@@ -200,6 +223,10 @@ double Agent::findInverseDocumentFrequency(const std::string &term)
     else
         return 0;
 }
+
+//------------------------------
+//  PRIVATE FUNCTIONS - helpers
+//------------------------------
 
 /**
  * @brief Agent::countWords
