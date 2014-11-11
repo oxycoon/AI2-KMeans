@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "agent.h"
+#include "document.h"
 
 using namespace std;
 

@@ -44,3 +44,13 @@ void Data::setContent(char *content)
 {
     _content = content;
 }
+
+void Data::addDocumentCount(int count)
+{
+    _documentCount.push_back(count);
+}
+
+void Data::changeDocumentCount(int count, int index)
+{
+    _documentCount[index] = count;
+}

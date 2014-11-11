@@ -58,6 +58,30 @@ std::vector<Data *> Agent::prepareDocumentCluster(int k, std::vector<Data *> col
     std::unordered_set<int> set;
 }
 
+std::vector<Data *> Agent::processDocuments(std::vector<Data *> dataCollection)
+{
+    //Find all distinct words in document collection.
+
+    //Remove white spaces, punctuations etc
+
+    //Create document vector space
+
+        //Calculate TFIDF per terms
+        //Add document in vector space
+
+    std::vector<Data *> collection;
+
+    return collection;
+}
+
+void Agent::initNonWords()
+{
+    _nonWordList.push_back("the");
+    _nonWordList.push_back("a");
+    _nonWordList.push_back("i");
+    _nonWordList.push_back("and");
+}
+
 //------------------------------
 //  PRIVATE FUNCTIONS
 //------------------------------
@@ -161,12 +185,17 @@ int Agent::countTermWords(const std::string &text, const std::string &term)
         }
         ++words[currentWord];
     }
-
-
-
     return words[term];
 }
 
+/**
+ * @brief Agent::calcDotProduct
+ * @param vecA
+ * @param vecB
+ * @return
+ *
+ *  Calculates dot product of two vectors
+ */
 double Agent::calcDotProduct(std::vector<double> vecA, std::vector<double> vecB)
 {
     double result = 0;
@@ -178,6 +207,13 @@ double Agent::calcDotProduct(std::vector<double> vecA, std::vector<double> vecB)
     return result;
 }
 
+/**
+ * @brief Agent::calcMagnitude
+ * @param vector
+ * @return
+ *
+ *  Calculates length of vector
+ */
 double Agent::calcMagnitude(std::vector<double> vector)
 {
     return std::sqrt(calcDotProduct(vector, vector));
@@ -201,4 +237,25 @@ void Agent::generateRandomNumbers(std::unordered_set<int> &set, int k, int docs)
             set.insert(pos);
         }while(set.size() != k);
     }
+}
+
+/**
+ * @brief Agent::checkForNonWord
+ * @param word
+ * @return
+ *
+ *  Checks if the word in question is a word that should not be counted.
+ */
+bool Agent::checkForNonWord(const char *word)
+{
+    bool result = false;
+    for(int i = 0; i < _nonWordList.size(); i++)
+    {
+        if(_nonWordList[i] == word)
+        {
+            result = true;
+            break;
+        }
+    }
+    return result;
 }

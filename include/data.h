@@ -1,7 +1,10 @@
 #ifndef DATA_H
 #define DATA_H
 
+#include "document.h"
+
 #include <string>
+#include <vector>
 
 class Data
 {
@@ -18,11 +21,16 @@ public:
     void setY(double y);
     void setContent(char* content);
 
+    void addDocumentCount(int count);
+    void changeDocumentCount(int count, int index);
+
 
 protected:
 
 private:
     double _x, _y;
+
+    std::vector<double> _documentCount;
 
     std::string _content;
 
