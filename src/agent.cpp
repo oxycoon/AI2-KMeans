@@ -85,13 +85,20 @@ std::vector<Data *> Agent::processDocuments(DocumentCollection &collection)
             std::string word;
             ss >> word;
 
+            //Removes punctuations and other symbols from the current word.
+            int index;
+            while ((index = word.find_first_of(".,!?\\;-*+")) != std::string::npos)
+            {
+                word.erase(index, 1);
+            }
+
             //Checks if the word is something to ignore;
             for(int j = 0; j < _nonWordList.size(); j++)
             {
                 if(word == _nonWordList[j])
                 {
                     addToList = false;
-                    break;
+                    continue;
                 }
             }
 
@@ -104,10 +111,11 @@ std::vector<Data *> Agent::processDocuments(DocumentCollection &collection)
                     if(word == _distinctTerms[j])
                     {
                         addToList = false;
-                        break;
+                        continue;
                     }
                 }
             }
+
             if(addToList)
             {
                 _distinctTerms.push_back(word);
