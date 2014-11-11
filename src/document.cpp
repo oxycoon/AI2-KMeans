@@ -20,8 +20,6 @@ Document::Document(const char *path)
         }
     }
     file.close();
-
-    std::cout << _text << std::endl;
 }
 
 std::string Document::getText()

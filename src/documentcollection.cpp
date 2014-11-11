@@ -9,19 +9,17 @@ std::vector<Document *> DocumentCollection::getCollection()
     return _collection;
 }
 
-void DocumentCollection::addDocument(Document *doc)
+bool DocumentCollection::addDocument(Document *doc)
 {
-    bool contains = false;
 
     for(int i = 0; i < 0; i++)
     {
         if(_collection[i] == doc)
         {
-            contains = true;
-            break;
+            return false;
         }
     }
 
-    if(!contains)
-        _collection.push_back(doc);
+    _collection.push_back(doc);
+    return true;
 }

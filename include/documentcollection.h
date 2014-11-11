@@ -12,7 +12,7 @@ public:
 
     std::vector<Document*> getCollection();
 
-    void addDocument(Document* doc);
+    bool addDocument(Document* doc);
 
 private:
     std::vector<Document*> _collection;

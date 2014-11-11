@@ -1,5 +1,7 @@
 #include "agent.h"
 
+#include "document.h"
+
 #include <algorithm>̈́
 #include <cmath>
 #include <map>
@@ -10,17 +12,24 @@
 #include <time.h>
 #include <stdlib.h>
 
-
 #include <boost/algorithm/string.hpp>
-
-
-
-
 
 Agent::Agent()
 {
     srand (time(NULL));
 
+}
+
+Agent::~Agent()
+{
+    for(int i = 0; i < _dataCollection.size(); i++)
+    {
+        delete _dataCollection[i];
+    }
+
+    _dataCollection.clear();
+    _distinctTerms.clear();
+    _nonWordList.clear();
 }
 
 double Agent::calcEuclDist(std::vector<double> vecA, std::vector<double> vecB)
@@ -58,20 +67,78 @@ std::vector<Data *> Agent::prepareDocumentCluster(int k, std::vector<Data *> col
     std::unordered_set<int> set;
 }
 
-std::vector<Data *> Agent::processDocuments(std::vector<Data *> dataCollection)
+std::vector<Data *> Agent::processDocuments(DocumentCollection &collection)
 {
-    //Find all distinct words in document collection.
+    std::vector<Document *> documents = collection.getCollection();
 
-    //Remove white spaces, punctuations etc
+    //Find all distinct words in document collection.
+    for(int i = 0; i < documents.size(); i++)
+    {
+        std::string text = documents[i]->getText();
+        boost::algorithm::to_lower(text);
+
+        std::stringstream ss(text);
+
+        while(!ss.eof())
+        {
+            bool unique = true;
+            std::string word;
+            ss >> word;
+
+            for(int j = 0; j < _distinctTerms.size(); j++)
+            {
+                if(word == _distinctTerms[j])
+                {
+                    unique = false;
+                    break;
+                }
+            }
+            if(unique)
+            {
+                _distinctTerms.push_back(word);
+            }
+        }
+    }
+
+    //Remove unnecessary words and characters from the distinct terms list
+    std::vector<std::string> killList = {"\"","\r","\n","(",")","[","]","{","}","","."," ",","};
+    for(int i = 0; i < killList.size(); i++)
+    {
+        _distinctTerms.erase(std::remove(_distinctTerms.begin(), _distinctTerms.end(), killList[i]), _distinctTerms.end());
+    }
+
+    std::cout << "Number of unique words: " << _distinctTerms.size() << std::endl;
+    for(int i=0; i < _distinctTerms.size(); i++)
+    {
+        std::cout << _distinctTerms[i] << std::endl;
+    }
 
     //Create document vector space
+
+    std::vector<Data *> result;
+    Data* dv;
+    std::vector<double> space;
+
+    for(int i = 0; i < documents.size(); i++)
+    {
+        space.clear();
+        for(int j = 0; j < _distinctTerms.size(); j++)
+        {
+            space.push_back(findTFIDF(documents[i], _distinctTerms[j]));
+        }
+
+        dv = new Data();
+        dv->setContent(documents[i]->getText().c_str());
+        dv->setVectorSpace(space);
+
+    }
 
         //Calculate TFIDF per terms
         //Add document in vector space
 
-    std::vector<Data *> collection;
 
-    return collection;
+
+    return result;
 }
 
 void Agent::initNonWords()
@@ -86,7 +153,7 @@ void Agent::initNonWords()
 //  PRIVATE FUNCTIONS
 //------------------------------
 
-double Agent::findTFIDF(Data *doc, std::string &term)
+double Agent::findTFIDF(Document *doc, std::string &term)
 {
     double tf = findTermFrequency(doc, term);
     double idf = findInverseDocumentFrequency(term);
@@ -94,9 +161,9 @@ double Agent::findTFIDF(Data *doc, std::string &term)
     return tf*idf;
 }
 
-double Agent::findTermFrequency(Data *doc, std::string &term)
+double Agent::findTermFrequency(Document *doc, std::string &term)
 {
-    std::string temp = doc->getContent();
+    std::string temp = doc->getText();
 
     //Converts the text and term to lowercase for easy comparison
     boost::algorithm::to_lower(temp);

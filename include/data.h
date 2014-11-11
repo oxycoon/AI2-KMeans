@@ -10,16 +10,11 @@ class Data
 {
 public:
     Data();
-    Data(double x, double y);
-    Data(char* content);
 
-    double getX();
-    double getY();
     std::string getContent();
 
-    void setX(double x);
-    void setY(double y);
-    void setContent(char* content);
+    void setContent(const char* content);
+    void setVectorSpace(std::vector<double> vs);
 
     void addDocumentCount(int count);
     void changeDocumentCount(int count, int index);
@@ -28,9 +23,9 @@ public:
 protected:
 
 private:
-    double _x, _y;
 
     std::vector<double> _documentCount;
+    std::vector<double> _vs;
 
     std::string _content;
 
