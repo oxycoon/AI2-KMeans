@@ -12,21 +12,13 @@ public:
     Data();
 
     std::string getContent();
+    std::vector<double> getVectorSpace();
 
     void setContent(const char* content);
     void setVectorSpace(std::vector<double> vs);
 
-    void addDocumentCount(int count);
-    void changeDocumentCount(int count, int index);
-
-
-protected:
-
 private:
-
-    std::vector<double> _documentCount;
     std::vector<double> _vs;
-
     std::string _content;
 
 

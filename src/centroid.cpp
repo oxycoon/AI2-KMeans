@@ -1,33 +1,36 @@
 #include "centroid.h"
 
+#include <algorithm>̈́
+
 Centroid::Centroid()
 {
 }
 
-Centroid::Centroid(double x, double y)
+std::vector<Data *> Centroid::getDocuments()
 {
-    _x = x;
-    _y = y;
+    return _groupedDocuments;
 }
 
-double Centroid::getX()
+void Centroid::setDocuments(std::vector<Data *> docs)
 {
-    return _x;
+    _groupedDocuments = docs;
 }
 
-double Centroid::getY()
+bool Centroid::addDocument(Data *doc)
 {
-    return _y;
+    for(int i = 0; i < _groupedDocuments.size(); i++)
+    {
+        if(_groupedDocuments[i] == doc)
+            return false;
+    }
+    _groupedDocuments.push_back(doc);
+    return true;
 }
 
-void Centroid::setX(double x)
+bool Centroid::removeDocument(Data *doc)
 {
-    _x = x;
+    int elements = _groupedDocuments.size();
+    _groupedDocuments.erase(std::remove(_groupedDocuments.begin(), _groupedDocuments.end(),
+                                        doc), _groupedDocuments.end());
+    return (elements > _groupedDocuments.size());
 }
-
-void Centroid::setY(double y)
-{
-    _y = y;
-}
-
-

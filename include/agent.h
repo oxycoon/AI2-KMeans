@@ -3,7 +3,6 @@
 
 #include <string>
 #include <vector>
-#include <unordered_set>
 
 #include "data.h"
 #include "centroid.h"
@@ -17,10 +16,10 @@ public:
     Agent();
     ~Agent();
 
-    double calcEuclDist(std::vector<double> vecA, std::vector<double> vecB);
-    double findCosineSimilarity(std::vector<double> vecA, std::vector<double> vecB);
+    double calcEuclDist(const std::vector<double> &vecA, const std::vector<double> &vecB);
+    double findCosineSimilarity(const std::vector<double> &vecA, const std::vector<double> &vecB);
 
-    std::vector<Data *> prepareDocumentCluster(int k, std::vector<Data*> collection, int counter);
+    std::vector<Centroid *> prepareDocumentCluster(int k, std::vector<Data*> &collection, int &counter);
     std::vector<Data *> processDocuments(DocumentCollection &collection);
 
 private:
@@ -41,13 +40,15 @@ private:
     //help functions
     int countWords(const char* str);
     int countTermWords(const std::string &text, const std::string &term);
+    int findClosestCluster(const std::vector<Centroid*> clusterCenter, const Data* data);
 
-    double calcDotProduct(std::vector<double> vecA, std::vector<double> vecB);
-    double calcMagnitude(std::vector<double> vector);
+    double calcDotProduct(const std::vector<double> &vecA, const std::vector<double> &vecB);
+    double calcMagnitude(const std::vector<double> &vector);
 
-    void generateRandomNumbers(std::unordered_set<int> &set, int k, int docs);
+    void generateRandomNumbers(std::vector<int> &set, const int k, const int docs);
 
     bool checkForNonWord(const char* word);
+    bool contains(const std::vector<int> &set, const int item);
 };
 
 #endif // AGENT_H

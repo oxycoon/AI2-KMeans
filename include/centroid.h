@@ -10,19 +10,14 @@ class Centroid
 {
 public:
     Centroid();
-    Centroid(double x, double y);
 
-    double getX();
-    double getY();
+    std::vector<Data*> getDocuments();
+    void setDocuments(std::vector<Data*> docs);
 
-    void setX(double x);
-    void setY(double y);
-
-    //std::vector<Data*> prepareDocumentCluster(int k, std::vector<Data*> collection, int counter);
+    bool addDocument(Data* doc);
+    bool removeDocument(Data* doc);
 
 private:
-    double _x, _y;
-
     std::vector<Data*> _groupedDocuments;
 };
 

@@ -32,7 +32,7 @@ Agent::~Agent()
     _nonWordList.clear();
 }
 
-double Agent::calcEuclDist(std::vector<double> vecA, std::vector<double> vecB)
+double Agent::calcEuclDist(const std::vector<double> &vecA, const std::vector<double> &vecB)
 {
     double result = 0;
 
@@ -43,7 +43,7 @@ double Agent::calcEuclDist(std::vector<double> vecA, std::vector<double> vecB)
     return std::sqrt(result);
 }
 
-double Agent::findCosineSimilarity(std::vector<double> vecA, std::vector<double> vecB)
+double Agent::findCosineSimilarity(const std::vector<double> &vecA, const std::vector<double> &vecB)
 {
     double dotProduct = calcDotProduct(vecA, vecB);
     double magA = 0, magB = 0;
@@ -57,14 +57,38 @@ double Agent::findCosineSimilarity(std::vector<double> vecA, std::vector<double>
     return dotProduct / (magA * magB);
 }
 
-std::vector<Data *> Agent::prepareDocumentCluster(int k, std::vector<Data *> collection, int counter)
+std::vector<Centroid *> Agent::prepareDocumentCluster(int k, std::vector<Data *> &collection, int &counter)
 {
     _globalCounter = 0;
 
-    std::vector<Centroid> centroids;
-    Centroid c;
+    std::vector<Centroid*> centroids;
+    Centroid* c;
 
-    std::unordered_set<int> set;
+    std::vector<int> uniqueRandoms;
+    generateRandomNumbers(uniqueRandoms, k, collection.size());
+
+    for(int i = 0; i < uniqueRandoms.size(); i++)
+    {
+        c = new Centroid();
+        c->addDocument(collection[uniqueRandoms[i]]);
+        centroids.push_back(c);
+    }
+
+
+    bool stopCrit;
+    std::vector<Centroid*> result;
+    std::vector<Centroid*> prevSet;
+
+    do
+    {
+        prevSet = centroids;
+        for(int i = 0; i < collection.size(); i++)
+        {
+            int index = findClosestCluster(centroids, collection[i]);
+            result[index]->addDocument(collection[i]);
+        }
+
+    }while(!stopCrit);
 }
 
 std::vector<Data *> Agent::processDocuments(DocumentCollection &collection)
@@ -131,6 +155,7 @@ std::vector<Data *> Agent::processDocuments(DocumentCollection &collection)
     }
 
 
+    //DEBUG: _distinctTerms contents
     for(int i = 0; i < _distinctTerms.size(); i++)
     {
         std::cout << _distinctTerms[i] << std::endl;
@@ -290,6 +315,17 @@ int Agent::countTermWords(const std::string &text, const std::string &term)
     return words[term];
 }
 
+int Agent::findClosestCluster(const std::vector<Centroid *> clusterCenter, const Data * data)
+{
+    double similarity[clusterCenter.size()];
+
+    for(int i = 0; i < clusterCenter.size(); i++)
+    {
+        similarity[i] = findCosineSimilarity(clusterCenter[i]->getDocuments()[0]->getVectorSpace(), data->getVectorSpace());
+    }
+
+}
+
 /**
  * @brief Agent::calcDotProduct
  * @param vecA
@@ -298,7 +334,7 @@ int Agent::countTermWords(const std::string &text, const std::string &term)
  *
  *  Calculates dot product of two vectors
  */
-double Agent::calcDotProduct(std::vector<double> vecA, std::vector<double> vecB)
+double Agent::calcDotProduct(const std::vector<double> &vecA, const std::vector<double> &vecB)
 {
     double result = 0;
 
@@ -316,19 +352,20 @@ double Agent::calcDotProduct(std::vector<double> vecA, std::vector<double> vecB)
  *
  *  Calculates length of vector
  */
-double Agent::calcMagnitude(std::vector<double> vector)
+double Agent::calcMagnitude(const std::vector<double> &vector)
 {
     return std::sqrt(calcDotProduct(vector, vector));
 }
 
-void Agent::generateRandomNumbers(std::unordered_set<int> &set, int k, int docs)
+void Agent::generateRandomNumbers(std::vector<int> &set, const int k, const int docs)
 {
     if(k > docs)
     {
         do
         {
             int pos = std::rand() % docs;
-            set.insert(pos);
+            if(!contains(set, pos))
+                set.push_back(pos);
         }while(set.size() != docs);
     }
     else
@@ -336,7 +373,8 @@ void Agent::generateRandomNumbers(std::unordered_set<int> &set, int k, int docs)
         do
         {
             int pos = std::rand() % docs;
-            set.insert(pos);
+            if(!contains(set, pos))
+                set.push_back(pos);
         }while(set.size() != k);
     }
 }
@@ -350,14 +388,31 @@ void Agent::generateRandomNumbers(std::unordered_set<int> &set, int k, int docs)
  */
 bool Agent::checkForNonWord(const char *word)
 {
-    bool result = false;
     for(int i = 0; i < _nonWordList.size(); i++)
     {
         if(_nonWordList[i] == word)
         {
-            result = true;
-            break;
+            return true;
         }
     }
-    return result;
+    return false;
+}
+
+/**
+ * @brief Agent::contains
+ * @param set
+ * @param item
+ * @return
+ *
+ *  Checks if the vector already contains this integer, used in the generation of random
+ *  unique numbers.
+ */
+bool Agent::contains(const std::vector<int> &set, const int item)
+{
+    for(int i = 0; i < set.size(); i++)
+    {
+        if(set[i] == item)
+            return true;
+    }
+    return false;
 }
