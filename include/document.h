@@ -9,7 +9,7 @@ class Document
 public:
     Document(const char* path);
 
-    std::string getText();
+    std::string getText() const;
 
 private:
     std::string _text;

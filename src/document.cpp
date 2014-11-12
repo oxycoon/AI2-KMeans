@@ -22,7 +22,7 @@ Document::Document(const char *path)
     file.close();
 }
 
-std::string Document::getText()
+std::string Document::getText() const
 {
     return _text;
 }

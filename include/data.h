@@ -11,11 +11,12 @@ class Data
 public:
     Data();
 
-    std::string getContent();
-    std::vector<double> getVectorSpace();
+    std::string getContent() const;
+    std::vector<double> getVectorSpace() const;
 
     void setContent(const char* content);
     void setVectorSpace(std::vector<double> vs);
+    void setVectorSpaceAt(double value, int index);
 
 private:
     std::vector<double> _vs;

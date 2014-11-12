@@ -4,7 +4,16 @@ DocumentCollection::DocumentCollection()
 {
 }
 
-std::vector<Document *> DocumentCollection::getCollection()
+DocumentCollection::~DocumentCollection()
+{
+    for(int i = 0; i < _collection.size(); i++)
+    {
+        delete _collection[i];
+    }
+    _collection.clear();
+}
+
+std::vector<Document *> DocumentCollection::getCollection() const
 {
     return _collection;
 }

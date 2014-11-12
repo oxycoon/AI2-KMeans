@@ -9,8 +9,9 @@ class DocumentCollection
 {
 public:
     DocumentCollection();
+    ~DocumentCollection();
 
-    std::vector<Document*> getCollection();
+    std::vector<Document*> getCollection() const;
 
     bool addDocument(Document* doc);
 

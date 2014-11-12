@@ -28,9 +28,11 @@ private:
     std::vector<std::string> _distinctTerms;
     std::vector<std::string> _nonWordList;
     int _globalCounter;
+    int _counter;
 
     //Initializers
     void initNonWords();
+    void initClusterCenter(std::vector<Centroid*> &centroids, int size);
 
 
     double findTFIDF(Document *doc, std::string &term);
@@ -48,7 +50,14 @@ private:
     void generateRandomNumbers(std::vector<int> &set, const int k, const int docs);
 
     bool checkForNonWord(const char* word);
+    bool checkStopCrit(std::vector<Centroid*> &prevCenterSet, std::vector<Centroid*> &newCenterSet);
     bool contains(const std::vector<int> &set, const int item);
+
+    std::vector<Centroid*> calcMeanPoints(std::vector<Centroid*> &clusterCenter);
+
+    //functions to clear the designated vectors of items
+    void clearVector(std::vector<Data*> &vector);
+    void clearVector(std::vector<Centroid*> &vector);
 };
 
 #endif // AGENT_H

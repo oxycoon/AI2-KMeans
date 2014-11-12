@@ -6,7 +6,12 @@ Centroid::Centroid()
 {
 }
 
-std::vector<Data *> Centroid::getDocuments()
+Centroid::~Centroid()
+{
+    clearGroupedDocuments();
+}
+
+std::vector<Data *> Centroid::getDocuments() const
 {
     return _groupedDocuments;
 }
@@ -33,4 +38,13 @@ bool Centroid::removeDocument(Data *doc)
     _groupedDocuments.erase(std::remove(_groupedDocuments.begin(), _groupedDocuments.end(),
                                         doc), _groupedDocuments.end());
     return (elements > _groupedDocuments.size());
+}
+
+void Centroid::clearGroupedDocuments()
+{
+    for(int i = 0; i < _groupedDocuments.size(); i++)
+    {
+        delete _groupedDocuments[i];
+    }
+    _groupedDocuments.clear();
 }

@@ -22,12 +22,8 @@ Agent::Agent()
 
 Agent::~Agent()
 {
-    for(int i = 0; i < _dataCollection.size(); i++)
-    {
-        delete _dataCollection[i];
-    }
+    clearVector(_dataCollection);
 
-    _dataCollection.clear();
     _distinctTerms.clear();
     _nonWordList.clear();
 }
@@ -88,7 +84,17 @@ std::vector<Centroid *> Agent::prepareDocumentCluster(int k, std::vector<Data *>
             result[index]->addDocument(collection[i]);
         }
 
+        initClusterCenter(centroids, centroids.size());
+        centroids = calcMeanPoints(result);
+        stopCrit = checkStopCrit(prevSet, centroids);
+
+        if(!stopCrit)
+            initClusterCenter(result, centroids.size());
+
     }while(!stopCrit);
+
+    counter = _counter;
+    return result;
 }
 
 std::vector<Data *> Agent::processDocuments(DocumentCollection &collection)
@@ -167,6 +173,8 @@ std::vector<Data *> Agent::processDocuments(DocumentCollection &collection)
     Data* dv;
     std::vector<double> space;
 
+
+    //Calculate TFIDF per terms and add document in vector space
     for(int i = 0; i < documents.size(); i++)
     {
         space.clear();
@@ -180,10 +188,6 @@ std::vector<Data *> Agent::processDocuments(DocumentCollection &collection)
         dv->setVectorSpace(space);
 
     }
-
-        //Calculate TFIDF per terms
-        //Add document in vector space
-
 
 
     return result;
@@ -203,6 +207,18 @@ void Agent::initNonWords()
     _nonWordList.push_back("is");
     _nonWordList.push_back("to");
     _nonWordList.push_back("or");
+}
+
+void Agent::initClusterCenter(std::vector<Centroid *> &centroids, int size)
+{
+    Centroid* c;
+    clearVector(centroids);
+
+    for(int i = 0; i < size; i++)
+    {
+        c = new Centroid();
+        centroids.push_back(c);
+    }
 }
 
 //------------------------------
@@ -315,7 +331,15 @@ int Agent::countTermWords(const std::string &text, const std::string &term)
     return words[term];
 }
 
-int Agent::findClosestCluster(const std::vector<Centroid *> clusterCenter, const Data * data)
+/**
+ * @brief Agent::findClosestCluster
+ * @param clusterCenter
+ * @param data
+ * @return
+ *
+ *  Finds the closest centroid cluster for the given data set.
+ */
+int Agent::findClosestCluster(const std::vector<Centroid*> clusterCenter, const Data* data)
 {
     double similarity[clusterCenter.size()];
 
@@ -324,6 +348,17 @@ int Agent::findClosestCluster(const std::vector<Centroid *> clusterCenter, const
         similarity[i] = findCosineSimilarity(clusterCenter[i]->getDocuments()[0]->getVectorSpace(), data->getVectorSpace());
     }
 
+    int index = 0;
+    double maxVal = similarity[0];
+    for(int i = 0; i < clusterCenter.size(); i++)
+    {
+        if(similarity[i] > maxVal)
+        {
+            maxVal = similarity[i];
+            index = i;
+        }
+    }
+    return index;
 }
 
 /**
@@ -415,4 +450,110 @@ bool Agent::contains(const std::vector<int> &set, const int item)
             return true;
     }
     return false;
+}
+
+/**
+ * @brief Agent::checkStopCrit
+ * @param prevCenterSet
+ * @param newCenterSet
+ * @return
+ *
+ *  Checks if the stopping criteria has been reached
+ */
+bool Agent::checkStopCrit(std::vector<Centroid *> &prevCenterSet, std::vector<Centroid *> &newCenterSet)
+{
+    _globalCounter++;
+    _counter = _globalCounter;
+
+    if(_globalCounter > 11000)
+    {
+        return true;
+    }
+    else
+    {
+        int changeIndex[newCenterSet.size()];
+        int index = 0;
+        do
+        {
+            int count = 0;
+            if(newCenterSet[index]->getDocuments().size() == 0 && prevCenterSet[index]->getDocuments().size() == 0)
+            {
+                index++;
+            }
+            else if(newCenterSet[index]->getDocuments().size() != 0 && prevCenterSet[index]->getDocuments().size() != 0)
+            {
+                for(int i = 0; i < newCenterSet[index]->getDocuments()[0]->getVectorSpace().size(); i++)
+                {
+                    if(newCenterSet[index]->getDocuments()[0]->getVectorSpace()[i] == prevCenterSet[index]->getDocuments()[0]->getVectorSpace()[i])
+                    {
+                        count++;
+                    }
+                }
+
+                if(count == newCenterSet[index]->getDocuments()[0]->getVectorSpace().size())
+                {
+                    changeIndex[index] = 0;
+                }
+                else
+                {
+                    changeIndex[index] = 1;
+                }
+
+                index++;
+            }
+            else
+            {
+                index++;
+                continue;
+            }
+        }
+        while(index < newCenterSet.size());
+
+        for(int i = 0; i < newCenterSet.size(); i++)
+        {
+            if(changeIndex[i] != 0)
+                return false;
+        }
+        return true;
+    }
+}
+
+std::vector<Centroid *> Agent::calcMeanPoints(std::vector<Centroid *> &clusterCenter)
+{
+    for(int i = 0; i < clusterCenter.size(); i++)
+    {
+        if(clusterCenter[i]->getDocuments().size() > 0)
+        {
+            for(int j = 0; j < clusterCenter[i]->getDocuments()[0]->getVectorSpace().size(); j++)
+            {
+                double total = 0.0;
+
+                for(int k = 0; k < clusterCenter[i]->getDocuments().size(); k++)
+                {
+                    total += clusterCenter[i]->getDocuments()[k]->getVectorSpace()[j];
+                }
+                clusterCenter[i]->getDocuments()[0]->setVectorSpaceAt(total / clusterCenter[i]->getDocuments().size(), j);
+            }
+        }
+    }
+    return clusterCenter;
+}
+
+void Agent::clearVector(std::vector<Data *> &vector)
+{
+    for(int i = 0; i < vector.size(); i++)
+    {
+        delete vector[i];
+    }
+    vector.clear();
+}
+
+void Agent::clearVector(std::vector<Centroid *> &vector)
+{
+    for(int i = 0; i < vector.size(); i++)
+    {
+        vector[i]->clearGroupedDocuments();
+        delete vector[i];
+    }
+    vector.clear();
 }

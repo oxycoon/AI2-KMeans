@@ -10,12 +10,15 @@ class Centroid
 {
 public:
     Centroid();
+    ~Centroid();
 
-    std::vector<Data*> getDocuments();
+    std::vector<Data*> getDocuments() const;
     void setDocuments(std::vector<Data*> docs);
 
     bool addDocument(Data* doc);
     bool removeDocument(Data* doc);
+
+    void clearGroupedDocuments();
 
 private:
     std::vector<Data*> _groupedDocuments;
