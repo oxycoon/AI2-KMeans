@@ -41,8 +41,8 @@ private:
     double findInverseDocumentFrequency(const std::string &term);
 
     //help functions
-    int countWords(const char* str);
-    int countTermWords(const std::string &text, const std::string &term);
+    //int countWords(const char* str);
+    //int countTermWords(const std::string &text, const std::string &term);
     int findClosestCluster(const std::vector<Centroid*> clusterCenter, const Data* data);
 
     double calcDotProduct(const std::vector<double> &vecA, const std::vector<double> &vecB);
@@ -57,10 +57,6 @@ private:
     bool contains(const std::vector<int> &set, const int item);
 
     std::vector<Centroid*> calcMeanPoints(std::vector<Centroid*> &clusterCenter);
-
-    //functions to clear the designated vectors of items
-    void clearVector(std::vector<Data*> &vector);
-    void clearVector(std::vector<Centroid*> &vector);
 };
 
 #endif // AGENT_H

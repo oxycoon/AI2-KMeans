@@ -1,6 +1,7 @@
 #include "centroid.h"
 
 #include <algorithm>̈́
+#include <iostream>
 
 Centroid::Centroid()
 {
@@ -19,6 +20,11 @@ std::vector<Data *> Centroid::getDocuments() const
 void Centroid::setDocuments(std::vector<Data *> docs)
 {
     _groupedDocuments = docs;
+}
+
+int Centroid::getSize() const
+{
+    return _groupedDocuments.size();
 }
 
 bool Centroid::addDocument(Data *doc)
@@ -47,4 +53,12 @@ void Centroid::clearGroupedDocuments()
         delete _groupedDocuments[i];
     }
     _groupedDocuments.clear();
+}
+
+void Centroid::printGroup()
+{
+    for(int i = 0; i < _groupedDocuments.size(); i++)
+    {
+        std::cout << _groupedDocuments[i]->getFileName() << std::endl;
+    }
 }

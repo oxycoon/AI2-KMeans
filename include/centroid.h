@@ -13,12 +13,16 @@ public:
     ~Centroid();
 
     std::vector<Data*> getDocuments() const;
+    int getSize() const;
+
     void setDocuments(std::vector<Data*> docs);
+
 
     bool addDocument(Data* doc);
     bool removeDocument(Data* doc);
 
     void clearGroupedDocuments();
+    void printGroup();
 
 private:
     std::vector<Data*> _groupedDocuments;

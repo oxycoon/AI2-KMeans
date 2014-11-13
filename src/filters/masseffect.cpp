@@ -13,6 +13,10 @@ MassEffect::MassEffect()
     _filter.push_back("prothean");
     _filter.push_back("mako");
     _filter.push_back("ea");
+    _filter.push_back("role");
+    _filter.push_back("playing");
+    _filter.push_back("game");
+    _filter.push_back("rpg");
 
     _name = "MassEffect";
 }

@@ -25,8 +25,6 @@ Agent::Agent()
 
 Agent::~Agent()
 {
-    clearVector(_dataCollection);
-
     _distinctTerms.clear();
     _nonWordList.clear();
 }
@@ -306,7 +304,7 @@ void Agent::initNonWords()
 void Agent::initClusterCenter(std::vector<Centroid *> &centroids, int size)
 {
     Centroid* c;
-    clearVector(centroids);
+    centroids.clear();
 
     for(int i = 0; i < size; i++)
     {
@@ -340,8 +338,8 @@ double Agent::findTermFrequency(Document *doc, std::string &term)
 
     int termCount, wordCount;
 
-    termCount = countTermWords(temp, term);
-    wordCount = countWords(temp.c_str());
+    termCount = doc->getTermCount(term);
+    wordCount = doc->getWordCount();
 
     return (double)termCount / (double)wordCount;
 }
@@ -354,15 +352,15 @@ double Agent::findInverseDocumentFrequency(const std::string &term)
     //std::cout << _documentCollection.getCollection().size() << std::endl;
     for(int i = 0; i < _documentCollection.getCollection().size(); i++)
     {
-        std::string temp = _documentCollection.getCollection()[i]->getText();
+        //std::string temp = _documentCollection.getCollection()[i]->getText();
         std::string tempTerm = term;
 
-        boost::algorithm::to_lower(temp);
-        boost::algorithm::to_lower(tempTerm);
+        /*boost::algorithm::to_lower(temp);
+        boost::algorithm::to_lower(tempTerm);*/
 
         //DEBUG:
         //std::cout << term << ": " << countTermWords(temp, tempTerm) << std::endl;
-        if(countTermWords(temp, tempTerm) > 0)
+        if(_documentCollection.getCollection()[i]->getTermCount(tempTerm) > 0)
         {
             documentCount++;
         }
@@ -378,14 +376,14 @@ double Agent::findInverseDocumentFrequency(const std::string &term)
 //  PRIVATE FUNCTIONS - helpers
 //------------------------------
 
-/**
+/*/**
  * @brief Agent::countWords
  * @param str
  * @return
  *
  *  http://stackoverflow.com/questions/3672234/c-function-to-count-all-the-words-in-a-string
  */
-int Agent::countWords(const char *str)
+/*int Agent::countWords(const char *str)
 {
     bool inSpaces = true;
     int words = 0;
@@ -404,7 +402,7 @@ int Agent::countWords(const char *str)
         ++str;
     }
     return words;
-}
+}*/
 
 /**
  * @brief Agent::countTermWords
@@ -412,7 +410,7 @@ int Agent::countWords(const char *str)
  * @param term
  * @return
  */
-int Agent::countTermWords(const std::string &text, const std::string &term)
+/*int Agent::countTermWords(const std::string &text, const std::string &term)
 {
     std::map<std::string, int> words;
 
@@ -430,7 +428,7 @@ int Agent::countTermWords(const std::string &text, const std::string &term)
         ++words[currentWord];
     }
     return words[term];
-}
+}*/
 
 /**
  * @brief Agent::findClosestCluster
@@ -638,23 +636,4 @@ std::vector<Centroid *> Agent::calcMeanPoints(std::vector<Centroid *> &clusterCe
         }
     }
     return clusterCenter;
-}
-
-void Agent::clearVector(std::vector<Data *> &vector)
-{
-    for(int i = 0; i < vector.size(); i++)
-    {
-        delete vector[i];
-    }
-    vector.clear();
-}
-
-void Agent::clearVector(std::vector<Centroid *> &vector)
-{
-    for(int i = 0; i < vector.size(); i++)
-    {
-        vector[i]->clearGroupedDocuments();
-        delete vector[i];
-    }
-    vector.clear();
 }
