@@ -9,6 +9,7 @@
 #include "documentcollection.h"
 
 class Document;
+class Filter;
 
 class Agent
 {
@@ -16,11 +17,9 @@ public:
     Agent();
     ~Agent();
 
-    double calcEuclDist(const std::vector<double> &vecA, const std::vector<double> &vecB);
-    double findCosineSimilarity(const std::vector<double> &vecA, const std::vector<double> &vecB);
-
     std::vector<Centroid *> prepareDocumentCluster(int k, std::vector<Data*> &collection, int &counter);
     std::vector<Data *> processDocuments(DocumentCollection &collection);
+    std::vector<Data *> processDocuments(DocumentCollection &collection, const std::vector<Filter*> &filter);
 
 private:
     DocumentCollection _documentCollection;
@@ -34,7 +33,7 @@ private:
     void initNonWords();
     void initClusterCenter(std::vector<Centroid*> &centroids, int size);
 
-
+    //Vector space functions
     double findTFIDF(Document *doc, std::string &term);
     double findTermFrequency(Document *doc, std::string &term);
     double findInverseDocumentFrequency(const std::string &term);
@@ -46,6 +45,8 @@ private:
 
     double calcDotProduct(const std::vector<double> &vecA, const std::vector<double> &vecB);
     double calcMagnitude(const std::vector<double> &vector);
+    double calcEuclDist(const std::vector<double> &vecA, const std::vector<double> &vecB);
+    double calcCosineSimilarity(const std::vector<double> &vecA, const std::vector<double> &vecB);
 
     void generateRandomNumbers(std::vector<int> &set, const int k, const int docs);
 

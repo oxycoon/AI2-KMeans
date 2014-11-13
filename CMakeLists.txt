@@ -6,7 +6,8 @@ add_definitions(-std=c++11)
 
 aux_source_directory(app MAIN)
 aux_source_directory(src SRC_LIST)
+aux_source_directory(src/filters SRC_FILTERS)
 INCLUDE_DIRECTORIES(include)
 
-add_executable(${PROJECT_NAME} ${SRC_LIST} ${MAIN})
+add_executable(${PROJECT_NAME} ${SRC_LIST} ${SRC_FILTERS} ${MAIN})
 

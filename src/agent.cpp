@@ -1,6 +1,7 @@
 #include "agent.h"
 
 #include "document.h"
+#include "filter.h"
 
 #include <algorithm>̈́
 #include <cmath>
@@ -39,7 +40,7 @@ double Agent::calcEuclDist(const std::vector<double> &vecA, const std::vector<do
     return std::sqrt(result);
 }
 
-double Agent::findCosineSimilarity(const std::vector<double> &vecA, const std::vector<double> &vecB)
+double Agent::calcCosineSimilarity(const std::vector<double> &vecA, const std::vector<double> &vecB)
 {
     double dotProduct = calcDotProduct(vecA, vecB);
     double magA = 0, magB = 0;
@@ -100,6 +101,7 @@ std::vector<Centroid *> Agent::prepareDocumentCluster(int k, std::vector<Data *>
 std::vector<Data *> Agent::processDocuments(DocumentCollection &collection)
 {
     std::vector<Document *> documents = collection.getCollection();
+    _documentCollection = collection;
 
     //Find all distinct words in document collection.
     for(int i = 0; i < documents.size(); i++)
@@ -186,9 +188,70 @@ std::vector<Data *> Agent::processDocuments(DocumentCollection &collection)
         dv = new Data();
         dv->setContent(documents[i]->getText().c_str());
         dv->setVectorSpace(space);
+        result.push_back(dv);
 
     }
 
+    return result;
+}
+
+std::vector<Data *> Agent::processDocuments(DocumentCollection &collection, const std::vector<Filter*> &filter)
+{
+    std::vector<Document *> documents = collection.getCollection();
+    _documentCollection = collection;
+
+    //Adds the filter words to the distinct words list
+    {
+        bool alreadyInList = false;
+        for(int i = 0; i < filter.size(); i++)
+        {
+            for(int j = 0; j < filter[i]->getFilter().size(); j++)
+            {
+                for(int k = 0; k < _distinctTerms.size(); k++)
+                {
+                    if(_distinctTerms[k] == filter[i]->getFilter()[j])
+                        alreadyInList = true;
+
+
+                }
+                if(!alreadyInList)
+                    _distinctTerms.push_back(filter[i]->getFilter()[j]);
+            }
+        }
+    }
+
+    //DEBUG: _distinctTerms contents
+    /*for(int i = 0; i < _distinctTerms.size(); i++)
+    {
+        std::cout << _distinctTerms[i] << std::endl;
+
+    }*/
+
+    //Create document vector space
+    std::vector<Data *> result;
+    Data* dv;
+
+
+    //Calculate TFIDF per terms and add document in vector space
+    for(int i = 0; i < documents.size(); i++)
+    {
+        std::vector<double> space;
+        for(int j = 0; j < _distinctTerms.size(); j++)
+        {
+            space.push_back(findTFIDF(documents[i], _distinctTerms[j]));
+
+            //DEBUG:
+            //std::cout << findTFIDF(documents[i], _distinctTerms[j]) << ", ";
+        }
+        //DEBUG:
+        //std::cout << std::endl;
+
+        dv = new Data();
+        dv->setContent(documents[i]->getText().c_str());
+        dv->setVectorSpace(space);
+        result.push_back(dv);
+
+    }
 
     return result;
 }
@@ -230,6 +293,9 @@ double Agent::findTFIDF(Document *doc, std::string &term)
     double tf = findTermFrequency(doc, term);
     double idf = findInverseDocumentFrequency(term);
 
+    //DEBUG:
+    //std::cout << tf << ", " << idf << std::endl;
+
     return tf*idf;
 }
 
@@ -253,14 +319,18 @@ double Agent::findInverseDocumentFrequency(const std::string &term)
 {
     int documentCount = 0;
 
-    for(int i = 0; i < _dataCollection.size(); i++)
+    //DEBUG:
+    //std::cout << _documentCollection.getCollection().size() << std::endl;
+    for(int i = 0; i < _documentCollection.getCollection().size(); i++)
     {
-        std::string temp = _dataCollection[i]->getContent();
+        std::string temp = _documentCollection.getCollection()[i]->getText();
         std::string tempTerm = term;
 
         boost::algorithm::to_lower(temp);
         boost::algorithm::to_lower(tempTerm);
 
+        //DEBUG:
+        //std::cout << term << ": " << countTermWords(temp, tempTerm) << std::endl;
         if(countTermWords(temp, tempTerm) > 0)
         {
             documentCount++;
@@ -268,7 +338,7 @@ double Agent::findInverseDocumentFrequency(const std::string &term)
     }
 
     if(documentCount > 0)
-        return (double)std::log((double)(_dataCollection.size())/(double)documentCount);
+        return (double)std::log((double)(_documentCollection.getCollection().size())/(double)documentCount);
     else
         return 0;
 }
@@ -345,7 +415,7 @@ int Agent::findClosestCluster(const std::vector<Centroid*> clusterCenter, const 
 
     for(int i = 0; i < clusterCenter.size(); i++)
     {
-        similarity[i] = findCosineSimilarity(clusterCenter[i]->getDocuments()[0]->getVectorSpace(), data->getVectorSpace());
+        similarity[i] = calcCosineSimilarity(clusterCenter[i]->getDocuments()[0]->getVectorSpace(), data->getVectorSpace());
     }
 
     int index = 0;

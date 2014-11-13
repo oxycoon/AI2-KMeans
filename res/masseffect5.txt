@@ -1,0 +1,23 @@
+I am not reviewing the content of the game except to say that Bioware has previously never disappointed me with its RPG's, and I expect Mass Effect is no different. I was highly excited to buy this game.
+
+However, I like many others, canceled my pre-order when I discovered that I was not actually going to be buying the game, even though I was going to be spending $50 on it.
+
+The truth is that this game comes with a new generation of digital rights management software called SecuROM. This DRM system does many things.
+
+First, if your gaming computer does not have internet access then you cannot activate and play the game at all. Bioware/EA does not want your business.
+
+Second, Bioware allows you three 'activations' only. Activations are tied to your computer's hardware and operating system configuration. If you ever reinstall windows, or upgrade a videocard, or add a new hard-drive, or even a simple cooling fan, you will need to use up another activation to keep playing mass effect on your computer. Several customers used up all three activations within a couple of weeks of buying the game as they tried reinstalling windows, or upgrading hardware, to overcome technical difficulties. Once you run out of activations and try to play the game again, you get a message informing you that you have no more activations left and that you should buy another copy of the game to get more. If you do some searching, you will find out that EA says that they may provide you more activations, on a case by case basis, if you contact them. They refuse to state what circumstances will be considered acceptable to them before allowing you more activations. At a minimum, you may need to provide a copy of your purchase receipt. You do actually keep your purchase receipts for $50 games right?
+
+Third, SecuROM is a highly controversial piece of software. Its existence is not disclosed on the box, nor do you get notified that it is being installed on your machine. SecuROM installs registry keys that are not deleted when you uninstall the game. And these registry keys use illegal characters to prevent the user from being able to delete them manually. You must use third-party software to do so.
+
+Fourth, SecuROM can include a module that provides 'information' to the game publisher. Bioware claims it is not using that module to do so, but there is no way to verify this.
+
+Fifth, Bioware cancelled the re-validate online every 5-10 days policy that they originally stated the game would have. Expect to see this return in future games.
+
+Lastly, Bioware/EA provides no method to de-activate a computer once it has been activated. Uninstalling the game from one computer does not free up that activation. Therefore, your ability to sell your copy of the game second-hand, guaranteed in the Copyright Act (Doctrine of First Sale) has been violated by Bioware/EA. Expect to see some lawsuits before too much longer.
+
+If you think I'm blowing up the DRM issue out of proportion then, by all means, go ahead and buy this game. While you are able to play it I'm sure you'll be very happy with it. However, do not expect to be able to keep playing it years into the future without paying extra for more activations.
+
+The same DRM system is also intended for use on EA games like Spore, and likely also Dragonage, plus many others.
+
+If you are concerned about this kind of practice becoming the industry standard, then I urge you not to spend your money on this game or any other titles from EA until they abandon this DRM fiasco. There are games publishers who take a different approach (for example, the game Sins of a Solar Empire is DRM free) and who are much more appreciative of your custom.

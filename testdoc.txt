@@ -1,5 +1,0 @@
-This is a test if the file reader works.
-This is a new line.
-This is another line.
-
-This is a second skipped line.
