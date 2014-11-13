@@ -291,6 +291,11 @@ std::vector<Data *> Agent::processDocuments(DocumentCollection &collection, cons
 //  PRIVATE FUNCTIONS - Initializers
 //------------------------------
 
+/**
+ * @brief Agent::initNonWords
+ *
+ *  Initializes the list of words to ignore.
+ */
 void Agent::initNonWords()
 {
     _nonWordList.push_back("the");
@@ -303,6 +308,13 @@ void Agent::initNonWords()
     _nonWordList.push_back("or");
 }
 
+/**
+ * @brief Agent::initClusterCenter
+ * @param centroids
+ * @param size
+ *
+ *  Initializes a cluster center
+ */
 void Agent::initClusterCenter(std::vector<Centroid *> &centroids, int size)
 {
     Centroid* c;
@@ -319,6 +331,14 @@ void Agent::initClusterCenter(std::vector<Centroid *> &centroids, int size)
 //  PRIVATE FUNCTIONS
 //------------------------------
 
+/**
+ * @brief Agent::findTFIDF
+ * @param doc
+ * @param term
+ * @return
+ *
+ *  Calculates Term Frequency * Inverse Document Frequency for the vector space
+ */
 double Agent::findTFIDF(Document *doc, std::string &term)
 {
     double tf = findTermFrequency(doc, term);
@@ -330,6 +350,14 @@ double Agent::findTFIDF(Document *doc, std::string &term)
     return tf*idf;
 }
 
+/**
+ * @brief Agent::findTermFrequency
+ * @param doc
+ * @param term
+ * @return
+ *
+ *  Finds the frequency of which a term occurs in a document.
+ */
 double Agent::findTermFrequency(Document *doc, std::string &term)
 {
     //Converts the text and term to lowercase for easy comparison
@@ -343,28 +371,26 @@ double Agent::findTermFrequency(Document *doc, std::string &term)
     return (double)termCount / (double)wordCount;
 }
 
+/**
+ * @brief Agent::findInverseDocumentFrequency
+ * @param term
+ * @return
+ *
+ *  Calculates the inverse document frequency for the term.
+ */
 double Agent::findInverseDocumentFrequency(const std::string &term)
 {
     int documentCount = 0;
 
-    //DEBUG:
-    //std::cout << _documentCollection.getCollection().size() << std::endl;
     for(int i = 0; i < _documentCollection.getCollection().size(); i++)
     {
-        //std::string temp = _documentCollection.getCollection()[i]->getText();
         std::string tempTerm = term;
 
-        /*boost::algorithm::to_lower(temp);
-        boost::algorithm::to_lower(tempTerm);*/
-
-        //DEBUG:
-        //std::cout << term << ": " << countTermWords(temp, tempTerm) << std::endl;
         if(_documentCollection.getCollection()[i]->getTermCount(tempTerm) > 0)
         {
             documentCount++;
         }
     }
-
     if(documentCount > 0)
         return (double)std::log((double)(_documentCollection.getCollection().size())/(double)documentCount);
     else
@@ -374,60 +400,6 @@ double Agent::findInverseDocumentFrequency(const std::string &term)
 //------------------------------
 //  PRIVATE FUNCTIONS - helpers
 //------------------------------
-
-/*/**
- * @brief Agent::countWords
- * @param str
- * @return
- *
- *  http://stackoverflow.com/questions/3672234/c-function-to-count-all-the-words-in-a-string
- */
-/*int Agent::countWords(const char *str)
-{
-    bool inSpaces = true;
-    int words = 0;
-
-    while(*str != NULL)
-    {
-        if(std::isspace(*str))
-        {
-            inSpaces = true;
-        }
-        else if(inSpaces)
-        {
-            words++;
-            inSpaces = false;
-        }
-        ++str;
-    }
-    return words;
-}*/
-
-/**
- * @brief Agent::countTermWords
- * @param text
- * @param term
- * @return
- */
-/*int Agent::countTermWords(const std::string &text, const std::string &term)
-{
-    std::map<std::string, int> words;
-
-    std::string currentWord;
-    words[term] = 0;
-
-    std::stringstream stream(text);
-    while(stream >> currentWord)
-    {
-        int index;
-        while ((index = currentWord.find_first_of(".,!?\\;-*+")) != std::string::npos)
-        {
-            currentWord.erase(index, 1);
-        }
-        ++words[currentWord];
-    }
-    return words[term];
-}*/
 
 /**
  * @brief Agent::findClosestCluster
@@ -490,6 +462,12 @@ double Agent::calcMagnitude(const std::vector<double> &vector)
     return std::sqrt(calcDotProduct(vector, vector));
 }
 
+/**
+ * @brief Agent::generateRandomNumbers
+ * @param set
+ * @param k
+ * @param docs
+ */
 void Agent::generateRandomNumbers(std::vector<int> &set, const int k, const int docs)
 {
     if(k > docs)

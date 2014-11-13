@@ -15,7 +15,7 @@ using namespace std;
 
 int main()
 {
-    Agent agent;
+    Agent unguidedAgent, guidedAgent, guidedAgent2;
     DocumentCollection collection;
     collection.addDocument(new Document("../res/masseffect1.txt"));
     collection.addDocument(new Document("../res/masseffect2.txt"));
@@ -48,28 +48,43 @@ int main()
 
     std::vector<Filter*> filters;
     filters.push_back(new MassEffect());
+    filters.push_back(new Fifa());
     filters.push_back(new WorldOfWarcraft());
     filters.push_back(new CallOfDuty());
-    filters.push_back(new Fifa());
 
-    std::vector<Data*> dataSet;
-    dataSet = agent.processDocuments(collection, filters);
+    std::vector<Data*> dataSetWithoutFilters;
+    dataSetWithoutFilters = unguidedAgent.processDocuments(collection);
+
+    std::vector<Centroid*> resultSetWithoutSeed;
+    int counter1 = 0;
+    resultSetWithoutSeed = unguidedAgent.prepareDocumentCluster(5, dataSetWithoutFilters, counter1);
+
+    for(int i = 0; i < resultSetWithoutSeed.size(); i++)
+    {
+        std::cout << "Cluster #" << i << std::endl;
+        resultSetWithoutSeed[i]->printGroup();
+    }
+
+
+    ///Clustering with a filter and seed
+    /*std::vector<Data*> dataSetWithFilters;
+    dataSetWithFilters = guidedAgent.processDocuments(collection, filters);
 
     std::vector<Data*> seeds;
-    seeds.push_back(dataSet[2]);
-    seeds.push_back(dataSet[7]);
-    seeds.push_back(dataSet[14]);
-    seeds.push_back(dataSet[21]);
+    seeds.push_back(dataSetWithFilters[2]);
+    seeds.push_back(dataSetWithFilters[7]);
+    seeds.push_back(dataSetWithFilters[14]);
+    seeds.push_back(dataSetWithFilters[21]);
 
-    std::vector<Centroid*> resultSet;
-    int counter = 0;
-    resultSet = agent.prepareDocumentCluster(dataSet, seeds, counter);
+    std::vector<Centroid*> resultSetWithSeed;
+    int counter2 = 0;
+    resultSetWithSeed = guidedAgent.prepareDocumentCluster(dataSetWithFilters, seeds, counter2);
 
-    for(int i = 0; i < resultSet.size(); i++)
+    for(int i = 0; i < resultSetWithSeed.size(); i++)
     {
-        std::cout << "Set #" << i+1 << std::endl;
-        resultSet[i]->printGroup();
-    }
+        std::cout << "Filter: " << filters[i]->getName() << std::endl;
+        resultSetWithSeed[i]->printGroup();
+    }*/
 
 
     return 0;
