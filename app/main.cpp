@@ -10,6 +10,8 @@
 #include "filters/callofduty.h"
 #include "filters/fifa.h"
 #include "filters/worldofwarcraft.h"
+#include "filters/praise.h"
+#include "filters/shame.h"
 
 using namespace std;
 
@@ -46,13 +48,18 @@ int main()
     collection.addDocument(new Document("../res/cod6.txt"));
     collection.addDocument(new Document("../res/cod7.txt"));
 
-    std::vector<Filter*> filters;
-    filters.push_back(new MassEffect());
-    filters.push_back(new Fifa());
-    filters.push_back(new WorldOfWarcraft());
-    filters.push_back(new CallOfDuty());
+    std::vector<Filter*> gameFilters;
+    gameFilters.push_back(new MassEffect());
+    gameFilters.push_back(new Fifa());
+    gameFilters.push_back(new WorldOfWarcraft());
+    gameFilters.push_back(new CallOfDuty());
 
-    std::vector<Data*> dataSetWithoutFilters;
+    std::vector<Filter*> serviceFilters;
+    serviceFilters.push_back(new Shame());
+    serviceFilters.push_back(new Praise());
+
+    ///Unguided clustering, note: VERY SLOW
+    /*std::vector<Data*> dataSetWithoutFilters;
     dataSetWithoutFilters = unguidedAgent.processDocuments(collection);
 
     std::vector<Centroid*> resultSetWithoutSeed;
@@ -63,12 +70,12 @@ int main()
     {
         std::cout << "Cluster #" << i << std::endl;
         resultSetWithoutSeed[i]->printGroup();
-    }
+    }*/
 
 
     ///Clustering with a filter and seed
     /*std::vector<Data*> dataSetWithFilters;
-    dataSetWithFilters = guidedAgent.processDocuments(collection, filters);
+    dataSetWithFilters = guidedAgent.processDocuments(collection, gameFilters);
 
     std::vector<Data*> seeds;
     seeds.push_back(dataSetWithFilters[2]);
@@ -85,6 +92,19 @@ int main()
         std::cout << "Filter: " << filters[i]->getName() << std::endl;
         resultSetWithSeed[i]->printGroup();
     }*/
+
+    std::vector<Data*> dataSetWithFilters2;
+    dataSetWithFilters2 = guidedAgent.processDocuments(collection, gameFilters);
+
+    std::vector<Centroid*> resultSetWithoutSeedWithFilter;
+    int counter3 = 0;
+    resultSetWithoutSeedWithFilter = guidedAgent.prepareDocumentCluster(2, dataSetWithFilters2, counter3);
+
+    for(int i = 0; i < resultSetWithoutSeedWithFilter.size(); i++)
+    {
+        std::cout << "Filter: " << serviceFilters[i]->getName() << std::endl;
+        resultSetWithoutSeedWithFilter[i]->printGroup();
+    }
 
 
     return 0;

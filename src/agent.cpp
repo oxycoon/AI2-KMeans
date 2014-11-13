@@ -29,6 +29,14 @@ Agent::~Agent()
     _nonWordList.clear();
 }
 
+/**
+ * @brief Agent::calcEuclDist
+ * @param vecA
+ * @param vecB
+ * @return
+ *
+ *  Calculates the eucledian distance between two vectors.
+ */
 double Agent::calcEuclDist(const std::vector<double> &vecA, const std::vector<double> &vecB)
 {
     double result = 0;
@@ -40,6 +48,14 @@ double Agent::calcEuclDist(const std::vector<double> &vecA, const std::vector<do
     return std::sqrt(result);
 }
 
+/**
+ * @brief Agent::calcCosineSimilarity
+ * @param vecA
+ * @param vecB
+ * @return
+ *
+ *  Calculates the cosine similarity between two vectors.
+ */
 double Agent::calcCosineSimilarity(const std::vector<double> &vecA, const std::vector<double> &vecB)
 {
     double dotProduct = calcDotProduct(vecA, vecB);
@@ -156,6 +172,13 @@ std::vector<Centroid *> Agent::prepareDocumentCluster(std::vector<Data*> &collec
     return result;
 }
 
+/**
+ * @brief Agent::processDocuments
+ * @param collection
+ * @return
+ *
+ *  Processes the documents without a filter, so sorts out all unique words.
+ */
 std::vector<Data *> Agent::processDocuments(DocumentCollection &collection)
 {
     //std::vector<Document *> documents = collection.getCollection();
@@ -241,6 +264,15 @@ std::vector<Data *> Agent::processDocuments(DocumentCollection &collection)
     return result;
 }
 
+/**
+ * @brief Agent::processDocuments
+ * @param collection
+ * @param filter
+ * @return
+ *
+ *  Processes documents with a filter, such that the program only uses these keywords
+ *  to cluster documents.
+ */
 std::vector<Data *> Agent::processDocuments(DocumentCollection &collection, const std::vector<Filter*> &filter)
 {
     _documentCollection = collection;
@@ -541,6 +573,7 @@ bool Agent::checkStopCrit(std::vector<Centroid *> &prevCenterSet, std::vector<Ce
     _globalCounter++;
     _counter = _globalCounter;
 
+    //checks if the agent has run over a certain amount of iterations
     if(_globalCounter > 11000)
     {
         return true;
@@ -552,9 +585,10 @@ bool Agent::checkStopCrit(std::vector<Centroid *> &prevCenterSet, std::vector<Ce
         do
         {
             int count = 0;
+
             if(newCenterSet[index]->getDocuments().size() == 0 && prevCenterSet[index]->getDocuments().size() == 0)
             {
-                index++;
+                index++; //proceed to next index
             }
             else if(newCenterSet[index]->getDocuments().size() != 0 && prevCenterSet[index]->getDocuments().size() != 0)
             {
@@ -585,6 +619,7 @@ bool Agent::checkStopCrit(std::vector<Centroid *> &prevCenterSet, std::vector<Ce
         }
         while(index < newCenterSet.size());
 
+        //If index list has 1 stopping criteria, return false
         for(int i = 0; i < newCenterSet.size(); i++)
         {
             if(changeIndex[i] != 0)
@@ -594,6 +629,13 @@ bool Agent::checkStopCrit(std::vector<Centroid *> &prevCenterSet, std::vector<Ce
     }
 }
 
+/**
+ * @brief Agent::calcMeanPoints
+ * @param clusterCenter
+ * @return
+ *
+ *  Calculates the mean points for the cluster centers
+ */
 std::vector<Centroid *> Agent::calcMeanPoints(std::vector<Centroid *> &clusterCenter)
 {
     for(int i = 0; i < clusterCenter.size(); i++)

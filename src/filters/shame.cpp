@@ -2,4 +2,50 @@
 
 Shame::Shame()
 {
+    _filter.push_back("bad");
+    _filter.push_back("poor");
+    _filter.push_back("boring");
+    _filter.push_back("shit");
+    _filter.push_back("shitty");
+    _filter.push_back("unfun");
+    _filter.push_back("lousy");
+    _filter.push_back("waste");
+    _filter.push_back("disappointing");
+    _filter.push_back("disappointment");
+    _filter.push_back("disappoint");
+    _filter.push_back("fail");
+    _filter.push_back("failure");
+    _filter.push_back("fails");
+    _filter.push_back("failing");
+    _filter.push_back("clunky");
+    _filter.push_back("unimpressive");
+    _filter.push_back("crap");
+    _filter.push_back("low");
+    _filter.push_back("lower");
+    _filter.push_back("lag");
+    _filter.push_back("worst");
+    _filter.push_back("problem");
+    _filter.push_back("problems");
+    _filter.push_back("problematic");
+    _filter.push_back("terrible");
+    _filter.push_back("horrible");
+    _filter.push_back("wasted");
+    _filter.push_back("repetitive");
+    _filter.push_back("difficult");
+    _filter.push_back("bugs");
+    _filter.push_back("mistake");
+    _filter.push_back("bug");
+    _filter.push_back("mistakes");
+    _filter.push_back("weak");
+    _filter.push_back("messing");
+    _filter.push_back("mess");
+    _filter.push_back("messed");
+    _filter.push_back("betrayed");
+    _filter.push_back("never");
+    _filter.push_back("offend");
+    _filter.push_back("offensive");
+    _filter.push_back("offended");
+    _filter.push_back("unplayable");
+
+    _name = "Shame";
 }

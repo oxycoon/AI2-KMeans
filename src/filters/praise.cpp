@@ -2,4 +2,54 @@
 
 Praise::Praise()
 {
+    _filter.push_back("great");
+    _filter.push_back("spectacular");
+    _filter.push_back("enjoyed");
+    _filter.push_back("enjoy");
+    _filter.push_back("good");
+    _filter.push_back("fun");
+    _filter.push_back("positive");
+    _filter.push_back("amusing");
+    _filter.push_back("funny");
+    _filter.push_back("positive");
+    _filter.push_back("happy");
+    _filter.push_back("recommended");
+    _filter.push_back("good");
+    _filter.push_back("extraordinary");
+    _filter.push_back("rich");
+    _filter.push_back("busy");
+    _filter.push_back("eager");
+    _filter.push_back("eagerly");
+    _filter.push_back("impressive");
+    _filter.push_back("impressed");
+    _filter.push_back("perfect");
+    _filter.push_back("sharp");
+    _filter.push_back("bright");
+    _filter.push_back("excellent");
+    _filter.push_back("excellence");
+    _filter.push_back("clean");
+    _filter.push_back("generous");
+    _filter.push_back("effective");
+    _filter.push_back("efficient");
+    _filter.push_back("fast");
+    _filter.push_back("high");
+    _filter.push_back("higher");
+    _filter.push_back("fresh");
+    _filter.push_back("freshen");
+    _filter.push_back("progress");
+    _filter.push_back("best");
+    _filter.push_back("love");
+    _filter.push_back("loved");
+    _filter.push_back("loves");
+    _filter.push_back("stunning");
+    _filter.push_back("beautiful");
+    _filter.push_back("amazing");
+    _filter.push_back("powerful");
+    _filter.push_back("cleaner");
+    _filter.push_back("deep");
+    _filter.push_back("immersive");
+    _filter.push_back("proud");
+    _filter.push_back("freedom");
+
+    _name = "Praise";
 }
