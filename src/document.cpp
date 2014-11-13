@@ -20,9 +20,15 @@ Document::Document(const char *path)
         }
     }
     file.close();
+    _path = path;
 }
 
 std::string Document::getText() const
 {
     return _text;
+}
+
+std::string Document::getPath() const
+{
+    return _path;
 }

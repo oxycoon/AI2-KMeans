@@ -10,6 +10,7 @@ public:
     Document(const char* path);
 
     std::string getText() const;
+    std::string getPath() const;
 
 private:
     std::string _text;

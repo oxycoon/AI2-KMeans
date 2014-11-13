@@ -1,6 +1,7 @@
 #include <iostream>
 
 #include "agent.h"
+#include "centroid.h"
 #include "document.h"
 #include "documentcollection.h"
 #include "filter.h"
@@ -25,6 +26,7 @@ int main()
     filters.push_back(new MassEffect());
 
     agent.processDocuments(collection, filters);
+    //std::cout << agent.prepareDocumentCluster()
 
 
 

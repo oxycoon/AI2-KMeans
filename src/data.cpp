@@ -9,6 +9,11 @@ std::string Data::getContent() const
     return _content;
 }
 
+std::string Data::getFileName() const
+{
+    return _fileName;
+}
+
 std::vector<double> Data::getVectorSpace() const
 {
     return _vs;
@@ -17,6 +22,11 @@ std::vector<double> Data::getVectorSpace() const
 void Data::setContent(const char *content)
 {
     _content = content;
+}
+
+void Data::setFileName(const char *name)
+{
+    _fileName = name;
 }
 
 void Data::setVectorSpace(std::vector<double> vs)

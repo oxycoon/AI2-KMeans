@@ -3,6 +3,8 @@
 #include "document.h"
 #include "filter.h"
 
+#include "MatchPathSeparator.h"
+
 #include <algorithm>̈́
 #include <cmath>
 #include <map>
@@ -54,6 +56,15 @@ double Agent::calcCosineSimilarity(const std::vector<double> &vecA, const std::v
     return dotProduct / (magA * magB);
 }
 
+/**
+ * @brief Agent::prepareDocumentCluster
+ * @param k
+ * @param collection
+ * @param counter
+ * @return
+ *
+ *  Creates the clusters using randomized initial centroids with k clusters
+ */
 std::vector<Centroid *> Agent::prepareDocumentCluster(int k, std::vector<Data *> &collection, int &counter)
 {
     _globalCounter = 0;
@@ -71,6 +82,53 @@ std::vector<Centroid *> Agent::prepareDocumentCluster(int k, std::vector<Data *>
         centroids.push_back(c);
     }
 
+    bool stopCrit;
+    std::vector<Centroid*> result;
+    std::vector<Centroid*> prevSet;
+
+    do
+    {
+        prevSet = centroids;
+        for(int i = 0; i < collection.size(); i++)
+        {
+            int index = findClosestCluster(centroids, collection[i]);
+            result[index]->addDocument(collection[i]);
+        }
+
+        initClusterCenter(centroids, centroids.size());
+        centroids = calcMeanPoints(result);
+        stopCrit = checkStopCrit(prevSet, centroids);
+
+        if(!stopCrit)
+            initClusterCenter(result, centroids.size());
+
+    }while(!stopCrit);
+
+    counter = _counter;
+    return result;
+}
+
+/**
+ * @brief Agent::prepareDocumentCluster
+ * @param collection
+ * @param seeds
+ * @return
+ *
+ *  Creates the clusters using seeds as initial centroids
+ */
+std::vector<Centroid *> Agent::prepareDocumentCluster(std::vector<Data*> &collection, std::vector<Data*> &seeds, int &counter)
+{
+    _globalCounter = 0;
+
+    std::vector<Centroid*> centroids;
+    Centroid* c;
+
+    for(int i = 0; i < seeds.size(); i++)
+    {
+        c = new Centroid();
+        c->addDocument(seeds[i]);
+        centroids.push_back(c);
+    }
 
     bool stopCrit;
     std::vector<Centroid*> result;
@@ -100,13 +158,13 @@ std::vector<Centroid *> Agent::prepareDocumentCluster(int k, std::vector<Data *>
 
 std::vector<Data *> Agent::processDocuments(DocumentCollection &collection)
 {
-    std::vector<Document *> documents = collection.getCollection();
+    //std::vector<Document *> documents = collection.getCollection();
     _documentCollection = collection;
 
     //Find all distinct words in document collection.
-    for(int i = 0; i < documents.size(); i++)
+    for(int i = 0; i < collection.getCollection().size(); i++)
     {
-        std::string text = documents[i]->getText();
+        std::string text = collection.getCollection()[i]->getText();
         boost::algorithm::to_lower(text);
 
         std::stringstream ss(text);
@@ -154,7 +212,6 @@ std::vector<Data *> Agent::processDocuments(DocumentCollection &collection)
             }
         }
     }
-
     //Remove unnecessary words and characters from the distinct terms list
     std::vector<std::string> killList = {"\"","\r","\n","(",")","[","]","{","}","","."," ",","};
     for(int i = 0; i < killList.size(); i++)
@@ -162,42 +219,30 @@ std::vector<Data *> Agent::processDocuments(DocumentCollection &collection)
         _distinctTerms.erase(std::remove(_distinctTerms.begin(), _distinctTerms.end(), killList[i]), _distinctTerms.end());
     }
 
-
-    //DEBUG: _distinctTerms contents
-    for(int i = 0; i < _distinctTerms.size(); i++)
-    {
-        std::cout << _distinctTerms[i] << std::endl;
-
-    }
-
     //Create document vector space
     std::vector<Data *> result;
     Data* dv;
-    std::vector<double> space;
 
-
-    //Calculate TFIDF per terms and add document in vector space
-    for(int i = 0; i < documents.size(); i++)
+    for(int i = 0; i < collection.getCollection().size(); i++)
     {
-        space.clear();
+        std::vector<double> space;
+        //Calculate TFIDF per terms and add document in vector space
+
         for(int j = 0; j < _distinctTerms.size(); j++)
         {
-            space.push_back(findTFIDF(documents[i], _distinctTerms[j]));
+            space.push_back(findTFIDF(collection.getCollection()[i], _distinctTerms[j]));
         }
-
         dv = new Data();
-        dv->setContent(documents[i]->getText().c_str());
+        dv->setContent(collection.getCollection()[i]->getText().c_str());
         dv->setVectorSpace(space);
+        dv->setFileName(collection.getCollection()[i]->getPath().c_str());
         result.push_back(dv);
-
     }
-
     return result;
 }
 
 std::vector<Data *> Agent::processDocuments(DocumentCollection &collection, const std::vector<Filter*> &filter)
 {
-    std::vector<Document *> documents = collection.getCollection();
     _documentCollection = collection;
 
     //Adds the filter words to the distinct words list
@@ -207,12 +252,12 @@ std::vector<Data *> Agent::processDocuments(DocumentCollection &collection, cons
         {
             for(int j = 0; j < filter[i]->getFilter().size(); j++)
             {
+                //If there are multiple occurances of the same filter word
+                //don't add more than once
                 for(int k = 0; k < _distinctTerms.size(); k++)
                 {
                     if(_distinctTerms[k] == filter[i]->getFilter()[j])
                         alreadyInList = true;
-
-
                 }
                 if(!alreadyInList)
                     _distinctTerms.push_back(filter[i]->getFilter()[j]);
@@ -220,39 +265,25 @@ std::vector<Data *> Agent::processDocuments(DocumentCollection &collection, cons
         }
     }
 
-    //DEBUG: _distinctTerms contents
-    /*for(int i = 0; i < _distinctTerms.size(); i++)
-    {
-        std::cout << _distinctTerms[i] << std::endl;
-
-    }*/
-
     //Create document vector space
     std::vector<Data *> result;
     Data* dv;
 
-
-    //Calculate TFIDF per terms and add document in vector space
-    for(int i = 0; i < documents.size(); i++)
+    for(int i = 0; i < collection.getCollection().size(); i++)
     {
         std::vector<double> space;
+        //Calculate TFIDF per terms and add document in vector space
+
         for(int j = 0; j < _distinctTerms.size(); j++)
         {
-            space.push_back(findTFIDF(documents[i], _distinctTerms[j]));
-
-            //DEBUG:
-            //std::cout << findTFIDF(documents[i], _distinctTerms[j]) << ", ";
+            space.push_back(findTFIDF(collection.getCollection()[i], _distinctTerms[j]));
         }
-        //DEBUG:
-        //std::cout << std::endl;
-
         dv = new Data();
-        dv->setContent(documents[i]->getText().c_str());
+        dv->setContent(collection.getCollection()[i]->getText().c_str());
         dv->setVectorSpace(space);
+        dv->setFileName(collection.getCollection()[i]->getPath().c_str());
         result.push_back(dv);
-
     }
-
     return result;
 }
 

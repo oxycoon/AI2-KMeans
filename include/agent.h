@@ -18,6 +18,8 @@ public:
     ~Agent();
 
     std::vector<Centroid *> prepareDocumentCluster(int k, std::vector<Data*> &collection, int &counter);
+    std::vector<Centroid *> prepareDocumentCluster(std::vector<Data*> &collection, std::vector<Data*> &seeds, int &counter);
+    //std::vector<Centroid *> seedDocumentCluster(std::vector<Data*> &seeds);
     std::vector<Data *> processDocuments(DocumentCollection &collection);
     std::vector<Data *> processDocuments(DocumentCollection &collection, const std::vector<Filter*> &filter);
 
