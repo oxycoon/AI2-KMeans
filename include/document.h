@@ -21,7 +21,7 @@ private:
     std::map<std::string, int> _wordList;
     int _wordCount;
 
-    int countWords(const std::string &text);
+    void countWords();
 };
 
 #endif // DOCUMENT_H

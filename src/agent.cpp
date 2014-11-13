@@ -84,6 +84,7 @@ std::vector<Centroid *> Agent::prepareDocumentCluster(int k, std::vector<Data *>
     std::vector<Centroid*> result;
     std::vector<Centroid*> prevSet;
 
+    initClusterCenter(result, centroids.size());
     do
     {
         prevSet = centroids;
@@ -132,6 +133,7 @@ std::vector<Centroid *> Agent::prepareDocumentCluster(std::vector<Data*> &collec
     std::vector<Centroid*> result;
     std::vector<Centroid*> prevSet;
 
+    initClusterCenter(result, centroids.size());
     do
     {
         prevSet = centroids;
@@ -330,10 +332,7 @@ double Agent::findTFIDF(Document *doc, std::string &term)
 
 double Agent::findTermFrequency(Document *doc, std::string &term)
 {
-    std::string temp = doc->getText();
-
     //Converts the text and term to lowercase for easy comparison
-    boost::algorithm::to_lower(temp);
     boost::algorithm::to_lower(term);
 
     int termCount, wordCount;

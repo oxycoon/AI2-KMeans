@@ -25,8 +25,7 @@ Document::Document(const char *path)
     file.close();
     _path = path;
     boost::algorithm::to_lower(_text);
-
-    _wordCount = countWords(_text.c_str());
+    countWords();
 }
 
 Document::~Document()
@@ -70,12 +69,12 @@ int Document::getTermCount(const std::string &term)
  *
  *  http://stackoverflow.com/questions/3672234/c-function-to-count-all-the-words-in-a-string
  */
-int Document::countWords(const std::string &text)
+void Document::countWords()
 {
 
     std::string currentWord;
 
-    std::stringstream stream(text);
+    std::stringstream stream(_text);
     while(stream >> currentWord)
     {
         int index;
@@ -83,23 +82,21 @@ int Document::countWords(const std::string &text)
         {
             currentWord.erase(index, 1);
 
-            if(_wordList.find(currentWord) != _wordList.end())
-            {
-                _wordList[currentWord]++;
-            }
-            else
-            {
-               _wordList[currentWord] = 1;
-            }
+
         }
-        //++_wordList[currentWord];
+        if(_wordList.find(currentWord) != _wordList.end())
+        {
+            _wordList[currentWord]++;
+        }
+        else
+        {
+           _wordList[currentWord] = 1;
+        }
         _wordCount++;
     }
-
-
-
+    //brute force, will fix later
     /*bool inSpaces = true;
-    int words = 0;
+    const char *str = text.c_str();
 
     while(*str != NULL)
     {
@@ -109,11 +106,9 @@ int Document::countWords(const std::string &text)
         }
         else if(inSpaces)
         {
-            words++;
+
             inSpaces = false;
         }
         ++str;
-    }
-    return words;*/
-
+    }*/
 }

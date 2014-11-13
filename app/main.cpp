@@ -54,9 +54,8 @@ int main()
 
     std::vector<Data*> dataSet;
     dataSet = agent.processDocuments(collection, filters);
-    //std::cout << agent.prepareDocumentCluster()
 
-    /*std::vector<Data*> seeds;
+    std::vector<Data*> seeds;
     seeds.push_back(dataSet[2]);
     seeds.push_back(dataSet[7]);
     seeds.push_back(dataSet[14]);
@@ -70,7 +69,7 @@ int main()
     {
         std::cout << "Set #" << i+1 << std::endl;
         resultSet[i]->printGroup();
-    }*/
+    }
 
 
     return 0;
