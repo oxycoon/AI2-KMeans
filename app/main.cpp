@@ -17,6 +17,9 @@ using namespace std;
 
 int main()
 {
+    std::cout << std::endl;
+    std::cout << "K-MEANS CLUSTERING AGENT" << std::endl;
+
     Agent unguidedAgent, guidedAgent, guidedAgent2;
     DocumentCollection collection;
     collection.addDocument(new Document("../res/masseffect1.txt"));
@@ -59,22 +62,29 @@ int main()
     serviceFilters.push_back(new Praise());
 
     ///Unguided clustering, note: VERY SLOW
-    /*std::vector<Data*> dataSetWithoutFilters;
+    std::cout << "---------------------------------------" << std::endl;
+    std::cout << "----------Unguided clustering----------" << std::endl;
+    std::cout << "---------------------------------------" << std::endl;
+    std::vector<Data*> dataSetWithoutFilters;
     dataSetWithoutFilters = unguidedAgent.processDocuments(collection);
 
     std::vector<Centroid*> resultSetWithoutSeed;
     int counter1 = 0;
-    resultSetWithoutSeed = unguidedAgent.prepareDocumentCluster(5, dataSetWithoutFilters, counter1);
+    resultSetWithoutSeed = unguidedAgent.prepareDocumentCluster(4, dataSetWithoutFilters, counter1);
 
     for(int i = 0; i < resultSetWithoutSeed.size(); i++)
     {
         std::cout << "Cluster #" << i << std::endl;
         resultSetWithoutSeed[i]->printGroup();
-    }*/
+    }
 
+    std::cout << "Number of iterations required to find result: " << counter1 << std::endl;
 
     ///Clustering with a filter and seed
-    /*std::vector<Data*> dataSetWithFilters;
+    std::cout << "---------------------------------------" << std::endl;
+    std::cout << "-----------Seeded clustering-----------" << std::endl;
+    std::cout << "---------------------------------------" << std::endl;
+    std::vector<Data*> dataSetWithFilters;
     dataSetWithFilters = guidedAgent.processDocuments(collection, gameFilters);
 
     std::vector<Data*> seeds;
@@ -89,22 +99,30 @@ int main()
 
     for(int i = 0; i < resultSetWithSeed.size(); i++)
     {
-        std::cout << "Filter: " << filters[i]->getName() << std::endl;
+        std::cout << "Filter: " << gameFilters[i]->getName() << std::endl;
         resultSetWithSeed[i]->printGroup();
-    }*/
+    }
 
+    std::cout << "Number of iterations required to find result: " << counter2 << std::endl;
+
+    ///Clustering with a filter but without a seed.
+    std::cout << "---------------------------------------" << std::endl;
+    std::cout << "----------Filtered clustering----------" << std::endl;
+    std::cout << "---------------------------------------" << std::endl;
     std::vector<Data*> dataSetWithFilters2;
-    dataSetWithFilters2 = guidedAgent.processDocuments(collection, gameFilters);
+    dataSetWithFilters2 = guidedAgent2.processDocuments(collection, gameFilters);
 
     std::vector<Centroid*> resultSetWithoutSeedWithFilter;
     int counter3 = 0;
-    resultSetWithoutSeedWithFilter = guidedAgent.prepareDocumentCluster(2, dataSetWithFilters2, counter3);
+    resultSetWithoutSeedWithFilter = guidedAgent2.prepareDocumentCluster(2, dataSetWithFilters2, counter3);
 
     for(int i = 0; i < resultSetWithoutSeedWithFilter.size(); i++)
     {
         std::cout << "Filter: " << serviceFilters[i]->getName() << std::endl;
         resultSetWithoutSeedWithFilter[i]->printGroup();
     }
+
+    std::cout << "Number of iterations required to find result: " << counter3 << std::endl;
 
 
     return 0;

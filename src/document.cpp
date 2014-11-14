@@ -67,6 +67,8 @@ int Document::getTermCount(const std::string &term)
  * @param str
  * @return
  *
+ *  Counts and maps the words in the document.
+ *
  *  http://stackoverflow.com/questions/3672234/c-function-to-count-all-the-words-in-a-string
  */
 void Document::countWords()
@@ -81,8 +83,6 @@ void Document::countWords()
         while ((index = currentWord.find_first_of(".,!?\\;-*+")) != std::string::npos)
         {
             currentWord.erase(index, 1);
-
-
         }
         if(_wordList.find(currentWord) != _wordList.end())
         {
@@ -94,21 +94,4 @@ void Document::countWords()
         }
         _wordCount++;
     }
-    //brute force, will fix later
-    /*bool inSpaces = true;
-    const char *str = text.c_str();
-
-    while(*str != NULL)
-    {
-        if(std::isspace(*str))
-        {
-            inSpaces = true;
-        }
-        else if(inSpaces)
-        {
-
-            inSpaces = false;
-        }
-        ++str;
-    }*/
 }

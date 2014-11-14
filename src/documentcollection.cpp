@@ -6,17 +6,6 @@ DocumentCollection::DocumentCollection()
 
 DocumentCollection::~DocumentCollection()
 {
-    /*for(int i = 0; i < _collection.size(); i++)
-    {
-        delete _collection[i];
-    }*/
-    /*while(!_collection.empty())
-    {
-        Document *el = _collection.back();
-        _collection.pop_back();
-        delete el;
-    }*/
-
     _collection.clear();
 }
 
